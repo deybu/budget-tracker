@@ -28,7 +28,7 @@
         const password = document.getElementById("password").value.trim();
         const message = document.getElementById("auth-message");
 
-        const res = await fetch("http://localhost:3000/login", {
+        const res = await fetch("https://budget-tracker-api-7o3a.onrender.com", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),

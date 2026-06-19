@@ -1,4 +1,4 @@
-const API = "http://localhost:3000";
+const API = "https://budget-tracker-api-7o3a.onrender.com";
 
 // Redirect to login if not authenticated
 const token = localStorage.getItem("token");
