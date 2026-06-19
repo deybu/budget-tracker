@@ -5,8 +5,8 @@ const jwt = require("jsonwebtoken");
 const db = require("./database");
 
 const app = express();
-const PORT = 3000;
-const SECRET = "budget_secret_key";
+const PORT = process.env.PORT || 3000;
+const SECRET = process.env.JWT_SECRET || "budget_secret_key";
 
 app.use(cors());
 app.use(express.json());
