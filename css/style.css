@@ -240,7 +240,7 @@ body {
 }
 
 .chart-container {
-  max-width: 640px;
+  max-width: 350px;
   width: 100%;
   margin: 0 auto 8px;
 }
