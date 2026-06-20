@@ -154,27 +154,34 @@ body {
   font-size: 18px;
 }
 
-#transaction-list {
+#transactions-list {
   list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-#transaction-list li {
+.transaction-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 14px 18px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   font-size: 14px;
 }
 
-.transaction-info {
+.transaction-left {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
-.transaction-description {
-  font-weight: bold;
+.transaction-item strong {
+  text-transform: capitalize;
 }
 
 .transaction-meta {
@@ -185,28 +192,31 @@ body {
 .transaction-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
-.transaction-amount.positive {
+.text-income {
   color: #27ae60;
-  font-weight: bold;
+  font-weight: 700;
 }
 
-.transaction-amount.negative {
+.text-expense {
   color: #e74c3c;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .delete-btn {
   background: none;
   border: none;
-  color: #ccc;
+  color: #888;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
+  padding: 6px 8px;
+  border-radius: 6px;
 }
 
 .delete-btn:hover {
+  background: rgba(0,0,0,0.03);
   color: #e74c3c;
 }
 
@@ -230,8 +240,9 @@ body {
 }
 
 .chart-container {
-  max-width: 400px;
-  margin: 0 auto;
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto 8px;
 }
 /* Auth Pages */
 .auth-container {

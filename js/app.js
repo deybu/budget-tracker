@@ -73,11 +73,14 @@ function renderTransactions(transactions) {
     const amt = parseFloat(t.amount);
     
     li.innerHTML = `
-      <span><strong>${t.description}</strong> (${t.category}) - ${t.date}</span>
-      <span class="${amt > 0 ? 'text-income' : 'text-expense'}">
-        ${amt > 0 ? '+' : ''}$${Math.abs(amt).toFixed(2)}
-      </span>
-      <button class="delete-btn" onclick="deleteTransaction(${t.id})">Delete</button>
+      <div class="transaction-left">
+        <div><strong>${t.description}</strong></div>
+        <div class="transaction-meta">(${t.category}) - ${t.date}</div>
+      </div>
+      <div class="transaction-right">
+        <div class="${amt > 0 ? 'text-income' : 'text-expense'}">${amt > 0 ? '+' : ''}$${Math.abs(amt).toFixed(2)}</div>
+        <button class="delete-btn" onclick="deleteTransaction(${t.id})">Delete</button>
+      </div>
     `;
     list.appendChild(li);
   });
