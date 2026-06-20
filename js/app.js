@@ -1,199 +1,147 @@
-const API = "https://budget-tracker-api-7o3a.onrender.com";
-
-// Redirect to login if not authenticated
+const API_URL = "https://budget-tracker-api-7o3a.onrender.com";
 const token = localStorage.getItem("token");
+
+// Redirect to login if no token is present
 if (!token) {
   window.location.href = "login.html";
 }
 
-// Show user email in navbar
-const emailEl = document.getElementById("user-email");
-if (emailEl) {
-  emailEl.textContent = "Welcome, " + localStorage.getItem("email");
-}
+document.getElementById("user-email").textContent = `Welcome, ${localStorage.getItem("email") || "User"}`;
 
-// Logout
-function logout() {
-  localStorage.removeItem("token");
-  localStorage.removeItem("email");
-  window.location.href = "login.html";
-}
+let spendingChart;
 
-let transactions = [];
-let spendingChart = null;
-
-const addBtn = document.getElementById("add-btn");
-const transactionList = document.getElementById("transaction-list");
-const totalIncomeEl = document.getElementById("total-income");
-const totalExpensesEl = document.getElementById("total-expenses");
-const balanceEl = document.getElementById("balance");
-
-function formatCurrency(amount) {
-  return "$" + Math.abs(amount).toFixed(2);
-}
-
-function updateSummary() {
-  const income = transactions
-    .filter((t) => t.amount > 0)
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const expenses = transactions
-    .filter((t) => t.amount < 0)
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const balance = income + expenses;
-
-  totalIncomeEl.textContent = formatCurrency(income);
-  totalExpensesEl.textContent = formatCurrency(expenses);
-  balanceEl.textContent = "$" + balance.toFixed(2);
-}
-
-function renderTransactions() {
-  transactionList.innerHTML = "";
-
-  if (transactions.length === 0) {
-    transactionList.innerHTML =
-      '<li class="empty-state">No transactions yet. Add one above.</li>';
+// Fetch and display dashboard data
+async function loadDashboard() {
+  const res = await fetch(`${API_URL}/transactions`, {
+    headers: { "Authorization": `Bearer ${token}` }
+  });
+  
+  if (res.status === 401) {
+    logout();
     return;
   }
 
-  transactions.forEach((t) => {
+  const transactions = await res.json();
+  renderSummary(transactions);
+  renderTransactions(transactions);
+  renderChart(transactions);
+}
+
+function renderSummary(transactions) {
+  let income = 0;
+  let expenses = 0;
+
+  transactions.forEach(t => {
+    if (t.amount > 0) {
+      income += t.amount;
+    } else {
+      expenses += Math.abs(t.amount);
+    }
+  });
+
+  const balance = income - expenses;
+
+  document.getElementById("total-income").textContent = `$${income.toFixed(2)}`;
+  document.getElementById("total-expenses").textContent = `$${expenses.toFixed(2)}`;
+  document.getElementById("balance").textContent = `$${balance.toFixed(2)}`;
+}
+
+function renderTransactions(transactions) {
+  const list = document.getElementById("transactions-list");
+  if (!list) return;
+  list.innerHTML = "";
+
+  transactions.forEach(t => {
     const li = document.createElement("li");
-    const amountClass = t.amount > 0 ? "positive" : "negative";
-    const amountSign = t.amount > 0 ? "+" : "-";
-
+    li.className = "transaction-item";
     li.innerHTML = `
-      <div class="transaction-info">
-        <span class="transaction-description">${t.description}</span>
-        <span class="transaction-meta">${t.category} · ${t.date}</span>
-      </div>
-      <div class="transaction-right">
-        <span class="transaction-amount ${amountClass}">
-          ${amountSign}${formatCurrency(t.amount)}
-        </span>
-        <button class="delete-btn" onclick="deleteTransaction(${t.id})">✕</button>
-      </div>
+      <span>${t.description} (${t.category}) - ${t.date}</span>
+      <span class="${t.amount > 0 ? 'text-income' : 'text-expense'}">
+        ${t.amount > 0 ? '+' : ''}$${t.amount.toFixed(2)}
+      </span>
+      <button onclick="deleteTransaction(${t.id})">Delete</button>
     `;
-
-    transactionList.appendChild(li);
+    list.appendChild(li);
   });
 }
 
-function getExpensesByCategory() {
-  const categoryTotals = {};
-  transactions
-    .filter((t) => t.amount < 0)
-    .forEach((t) => {
-      if (categoryTotals[t.category]) {
-        categoryTotals[t.category] += Math.abs(t.amount);
-      } else {
-        categoryTotals[t.category] = Math.abs(t.amount);
-      }
-    });
-  return categoryTotals;
-}
-
-function updateChart() {
-  const data = getExpensesByCategory();
-  const labels = Object.keys(data);
-  const values = Object.values(data);
-
-  const colors = [
-    "#e74c3c", "#3498db", "#2ecc71",
-    "#f39c12", "#9b59b6", "#1abc9c", "#e67e22",
-  ];
-
-  const ctx = document.getElementById("spending-chart").getContext("2d");
-
-  if (spendingChart) {
-    spendingChart.destroy();
-  }
-
-  if (labels.length === 0) return;
-
-  spendingChart = new Chart(ctx, {
-    type: "pie",
-    data: {
-      labels,
-      datasets: [{
-        data: values,
-        backgroundColor: colors.slice(0, labels.length),
-        borderWidth: 2,
-        borderColor: "#fff",
-      }],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { position: "bottom" },
-        tooltip: {
-          callbacks: {
-            label: (context) =>
-              context.label + ": $" + context.parsed.toFixed(2),
-          },
-        },
-      },
-    },
-  });
-}
-
-// Fetch all transactions from the server
-async function loadTransactions() {
-  const res = await fetch(API + "/transactions", {
-    headers: { Authorization: "Bearer " + token },
-  });
-  transactions = await res.json();
-  renderTransactions();
-  updateSummary();
-  updateChart();
-}
-
-// Add transaction to server
-async function addTransaction() {
+// Add transaction
+document.getElementById("add-btn").addEventListener("click", async () => {
   const description = document.getElementById("description").value.trim();
   const amount = parseFloat(document.getElementById("amount").value);
   const category = document.getElementById("category").value;
   const date = document.getElementById("date").value;
 
-  if (!description) return alert("Please enter a description.");
-  if (isNaN(amount) || amount === 0) return alert("Please enter a valid amount.");
-  if (!date) return alert("Please select a date.");
+  if (!description || isNaN(amount) || !date) {
+    alert("Please fill out all fields correctly.");
+    return;
+  }
 
-  const res = await fetch(API + "/transactions", {
+  const res = await fetch(`${API_URL}/transactions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
+      "Authorization": `Bearer ${token}`
     },
-    body: JSON.stringify({ description, amount, category, date }),
+    body: JSON.stringify({ description, amount, category, date })
   });
 
-  const newTransaction = await res.json();
-  transactions.push(newTransaction);
+  if (res.ok) {
+    // Clear inputs
+    document.getElementById("description").value = "";
+    document.getElementById("amount").value = "";
+    document.getElementById("date").value = "";
+    loadDashboard();
+  }
+});
 
-  document.getElementById("description").value = "";
-  document.getElementById("amount").value = "";
-  document.getElementById("date").value = "";
-
-  renderTransactions();
-  updateSummary();
-  updateChart();
-}
-
-// Delete transaction from server
+// Delete transaction
 async function deleteTransaction(id) {
-  await fetch(API + "/transactions/" + id, {
+  const res = await fetch(`${API_URL}/transactions/${id}`, {
     method: "DELETE",
-    headers: { Authorization: "Bearer " + token },
+    headers: { "Authorization": `Bearer ${token}` }
   });
 
-  transactions = transactions.filter((t) => t.id !== id);
-  renderTransactions();
-  updateSummary();
-  updateChart();
+  if (res.ok) {
+    loadDashboard();
+  }
 }
 
-addBtn.addEventListener("click", addTransaction);
-document.getElementById("date").valueAsDate = new Date();
+// Render Chart.js
+function renderChart(transactions) {
+  const ctx = document.getElementById("spending-chart").getContext("2d");
+  
+  const categoryTotals = {};
+  transactions.forEach(t => {
+    if (t.amount < 0) { // Only graph expenses
+      categoryTotals[t.category] = (categoryTotals[t.category] || 0) + Math.abs(t.amount);
+    }
+  });
 
-loadTransactions();
+  const labels = Object.keys(categoryTotals);
+  const data = Object.values(categoryTotals);
+
+  if (spendingChart) {
+    spendingChart.destroy();
+  }
+
+  spendingChart = new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels: labels,
+      datasets: [{
+        data: data,
+        backgroundColor: ["#ff6384", "#36a2eb", "#cc65fe", "#ffce56", "#4bc0c0", "#a365ff"]
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+
+function logout() {
+  localStorage.clear();
+  window.location.href = "login.html";
+}
+
+// Initial Run
+loadDashboard();
