@@ -1,75 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Budget Tracker</title>
-  <link rel="stylesheet" href="css/style.css" />
-  <script src="app.js"></script>
-</head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Budget Tracker</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
   <body>
 
-
-    <!-- Navigation -->
     <nav class="navbar">
-  <span class="logo">BudgetTracker</span>
-  <div class="nav-right">
-    <span class="user-info" id="user-email">Welcome</span>
-    <button id="logout-btn" onclick="logout()">Logout</button>
-  </div>
-</nav>
-    <!-- Summary Cards -->
-    <section class="summary">
-      <div class="card income">
-        <p class="card-label">Total Income</p>
-        <p class="card-amount" id="total-income">$0.00</p>
+      <span class="logo">BudgetTracker</span>
+      <div class="nav-right">
+        <span class="user-info" id="user-email">Welcome</span>
+        <button id="logout-btn" onclick="logout()">Logout</button>
       </div>
-      <div class="card expenses">
-        <p class="card-label">Total Expenses</p>
-        <p class="card-amount" id="total-expenses">$0.00</p>
+    </nav>
+
+    <div class="app-container">
+      
+      <section class="summary">
+        <div class="card income">
+          <p class="card-label">Total Income</p>
+          <p class="card-amount" id="total-income">$0.00</p>
+        </div>
+        <div class="card expenses">
+          <p class="card-label">Total Expenses</p>
+          <p class="card-amount" id="total-expenses">$0.00</p>
+        </div>
+        <div class="card balance">
+          <p class="card-label">Balance</p>
+          <p class="card-amount" id="balance">$0.00</p>
+        </div>
+      </section>
+
+      <div class="main-content">
+        
+        <div class="left-column">
+          <section class="form-section">
+            <h2>Add Transaction</h2>
+            <div class="form">
+              <input type="text" id="description" placeholder="Description (e.g. Salary, Groceries)" />
+              <input type="number" id="amount" placeholder="Amount (use negative for expense, e.g. -50)" />
+              <select id="category">
+                <option value="Income">Income</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Bills">Bills</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Health">Health</option>
+                <option value="Other">Other</option>
+              </select>
+              <input type="date" id="date" />
+              <button id="add-btn">Add Transaction</button>
+            </div>
+          </section>
+
+          <section class="chart-section">
+            <h2>Spending by Category</h2>
+            <div class="chart-container">
+              <canvas id="spending-chart"></canvas>
+            </div>
+          </section>
+        </div>
+
+        <div class="right-column">
+          <section class="transactions-section">
+            <h2>Recent Transactions</h2>
+            <ul id="transactions-list" class="transactions-list">
+              </ul>
+          </section>
+        </div>
+
       </div>
-      <div class="card balance">
-        <p class="card-label">Balance</p>
-        <p class="card-amount" id="balance">$0.00</p>
-      </div>
-    </section>
+    </div>
 
-     <!-- Chart -->
-<section class="chart-section">
-  <h2>Spending by Category</h2>
-  <div class="chart-container">
-    <canvas id="spending-chart"></canvas>
-  </div>
-</section>
-
-    <!-- Add Transaction Form -->
-    <section class="form-section">
-      <h2>Add Transaction</h2>
-      <div class="form">
-        <input type="text" id="description" placeholder="Description (e.g. Salary, Groceries)" />
-        <input type="number" id="amount" placeholder="Amount (use negative for expense, e.g. -500)" />
-        <select id="category">
-          <option value="Income">Income</option>
-          <option value="Food">Food</option>
-          <option value="Transport">Transport</option>
-          <option value="Bills">Bills</option>
-          <option value="Shopping">Shopping</option>
-          <option value="Health">Health</option>
-          <option value="Other">Other</option>
-        </select>
-        <input type="date" id="date" />
-        <button id="add-btn">Add Transaction</button>
-      </div>
-    </section>
-
-    <!-- Transaction List -->
-    <section class="transactions-section">
-      <h2>Transactions</h2>
-      <ul id="transaction-list">
-        <!-- Transactions appear here -->
-      </ul>
-    </section>
-
-    <script src="js/app.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>
