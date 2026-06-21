@@ -12,6 +12,18 @@
     <nav class="navbar">
       <span class="logo">BudgetTracker</span>
       <div class="nav-right">
+        <div class="theme-picker">
+          <label for="theme-select" class="theme-label">Theme</label>
+          <select id="theme-select" class="theme-selector">
+            <option value="theme-default">Classic</option>
+            <option value="theme-dark">Dark</option>
+            <option value="theme-cute">Pink Cute</option>
+            <option value="theme-it">IT Tech</option>
+            <option value="theme-hello-kitty">Hello Kitty</option>
+            <option value="theme-rapunzel">Rapunzel</option>
+            <option value="theme-lavender">Lavender</option>
+          </select>
+        </div>
         <span class="user-info" id="user-email">Welcome</span>
         <button id="logout-btn" onclick="logout()">Logout</button>
       </div>

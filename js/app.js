@@ -1,9 +1,38 @@
 const API_URL = "https://budget-tracker-api-7o3a.onrender.com";
 const token = localStorage.getItem("token");
+const THEME_KEY = "budgetTrackerTheme";
+const themeSelect = document.getElementById("theme-select");
 
 // Redirect back to user validation portal if token credential is lost
 if (!token) {
   window.location.href = "login.html";
+}
+
+function setTheme(themeName) {
+  const themeClasses = [
+    "theme-default",
+    "theme-dark",
+    "theme-cute",
+    "theme-it",
+    "theme-hello-kitty",
+    "theme-rapunzel",
+    "theme-lavender"
+  ];
+  document.body.classList.remove(...themeClasses);
+  document.body.classList.add(themeName);
+  localStorage.setItem(THEME_KEY, themeName);
+  if (themeSelect) themeSelect.value = themeName;
+}
+
+function initTheme() {
+  const savedTheme = localStorage.getItem(THEME_KEY) || "theme-default";
+  setTheme(savedTheme);
+}
+
+if (themeSelect) {
+  themeSelect.addEventListener("change", (event) => {
+    setTheme(event.target.value);
+  });
 }
 
 // Update login state text label safely
