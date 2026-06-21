@@ -35,6 +35,71 @@ if (themeSelect) {
   });
 }
 
+const amountInput = document.getElementById("amount");
+
+function sanitizeAmountInput(value) {
+  return value.replace(/[^0-9.-]/g, "");
+}
+
+function toggleMinus() {
+  if (!amountInput) return;
+  const value = amountInput.value.trim();
+  if (value === "") {
+    amountInput.value = "-";
+    return;
+  }
+  amountInput.value = value.startsWith("-") ? value.slice(1) : `-${value}`;
+}
+
+function clearAmount() {
+  if (!amountInput) return;
+  amountInput.value = "";
+}
+
+function appendAmountDigit(digit) {
+  if (!amountInput) return;
+  let current = amountInput.value.trim();
+  if (current === "0") current = "";
+  if (current === "-") {
+    amountInput.value = `-${digit}`;
+    return;
+  }
+  amountInput.value = `${current}${digit}`;
+}
+
+function applyPresetValue(value) {
+  if (!amountInput) return;
+  const current = amountInput.value.trim();
+  const sign = current.startsWith("-") ? "-" : "";
+  amountInput.value = `${sign}${value}`;
+}
+
+window.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) return;
+  if (target.matches(".preset-key")) {
+    const preset = target.dataset.preset;
+    if (preset) applyPresetValue(preset);
+    return;
+  }
+
+  if (target.matches(".keypad-key")) {
+    const key = target.dataset.key;
+    const action = target.dataset.action;
+    if (action === "toggle-minus") {
+      toggleMinus();
+      return;
+    }
+    if (action === "clear") {
+      clearAmount();
+      return;
+    }
+    if (key) {
+      appendAmountDigit(key);
+    }
+  }
+});
+
 // Update login state text label safely
 const emailLabel = document.getElementById("user-email");
 if (emailLabel) {
@@ -81,9 +146,9 @@ function renderSummary(transactions) {
 
   const balance = income - expenses;
 
-  if (document.getElementById("total-income")) document.getElementById("total-income").textContent = `$${income.toFixed(2)}`;
-  if (document.getElementById("total-expenses")) document.getElementById("total-expenses").textContent = `$${expenses.toFixed(2)}`;
-  if (document.getElementById("balance")) document.getElementById("balance").textContent = `$${balance.toFixed(2)}`;
+  if (document.getElementById("total-income")) document.getElementById("total-income").textContent = `₱${income.toFixed(2)}`;
+  if (document.getElementById("total-expenses")) document.getElementById("total-expenses").textContent = `₱${expenses.toFixed(2)}`;
+  if (document.getElementById("balance")) document.getElementById("balance").textContent = `₱${balance.toFixed(2)}`;
 }
 
 function renderTransactions(transactions) {
@@ -107,7 +172,7 @@ function renderTransactions(transactions) {
         <div class="transaction-meta">(${t.category}) - ${t.date}</div>
       </div>
       <div class="transaction-right">
-        <div class="${amt > 0 ? 'text-income' : 'text-expense'}">${amt > 0 ? '+' : ''}$${Math.abs(amt).toFixed(2)}</div>
+        <div class="${amt > 0 ? 'text-income' : 'text-expense'}">${amt > 0 ? '+ ' : ''}₱${Math.abs(amt).toFixed(2)}</div>
         <button class="delete-btn" onclick="deleteTransaction(${t.id})">Delete</button>
       </div>
     `;
@@ -175,7 +240,8 @@ const transactionFormButton = document.getElementById("add-btn");
 if (transactionFormButton) {
   transactionFormButton.addEventListener("click", async () => {
     const description = document.getElementById("description").value.trim();
-    const amount = parseFloat(document.getElementById("amount").value);
+    const amountValue = document.getElementById("amount").value.trim();
+    const amount = parseFloat(amountValue);
     const category = document.getElementById("category").value;
     const date = document.getElementById("date").value;
 

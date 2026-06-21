@@ -60,7 +60,30 @@
             <h2>Add Transaction</h2>
             <div class="form">
               <input type="text" id="description" placeholder="Description (e.g. Salary, Groceries)" />
-              <input type="number" id="amount" placeholder="Amount (use negative for expense, e.g. -50)" />
+              <div class="amount-input-group">
+                <span class="currency-prefix">₱</span>
+                <input type="text" id="amount" placeholder="Amount (use - for expense, e.g. -50)" />
+              </div>
+              <div class="preset-row">
+                <button type="button" class="preset-key" data-preset="50">₱50</button>
+                <button type="button" class="preset-key" data-preset="100">₱100</button>
+                <button type="button" class="preset-key" data-preset="200">₱200</button>
+                <button type="button" class="preset-key" data-preset="500">₱500</button>
+              </div>
+              <div class="keypad">
+                <button type="button" class="keypad-key" data-key="1">1</button>
+                <button type="button" class="keypad-key" data-key="2">2</button>
+                <button type="button" class="keypad-key" data-key="3">3</button>
+                <button type="button" class="keypad-key" data-key="4">4</button>
+                <button type="button" class="keypad-key" data-key="5">5</button>
+                <button type="button" class="keypad-key" data-key="6">6</button>
+                <button type="button" class="keypad-key" data-key="7">7</button>
+                <button type="button" class="keypad-key" data-key="8">8</button>
+                <button type="button" class="keypad-key" data-key="9">9</button>
+                <button type="button" class="keypad-key action-key" data-action="toggle-minus">-</button>
+                <button type="button" class="keypad-key" data-key="0">0</button>
+                <button type="button" class="keypad-key action-key" data-action="clear">C</button>
+              </div>
               <select id="category">
                 <option value="Income">Income</option>
                 <option value="Food">Food</option>
