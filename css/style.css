@@ -244,12 +244,37 @@ body {
   width: 100%;
   margin: 0 auto 8px;
 }
+
+.chart-container canvas {
+  width: 100% !important;
+  height: auto !important;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 32px 40px;
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 24px;
+}
+
+.left-column,
+.right-column {
+  display: flex;
+  flex-direction: column;
+}
+
 /* Auth Pages */
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 80vh;
+  padding: 24px 16px;
 }
 
 .auth-box {
@@ -300,9 +325,126 @@ body {
   color: #2980b9;
   text-decoration: none;
 }
+
 .nav-right {
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+/* Responsive Mobile Breakpoints */
+@media (max-width: 900px) {
+  .navbar {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 16px 20px;
+  }
+
+  .nav-right {
+    width: 100%;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .summary {
+    padding: 20px;
+    gap: 14px;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  .chart-section,
+  .form-section,
+  .transactions-section {
+    margin: 0 0 24px;
+    padding: 22px;
+  }
+
+  .chart-container {
+    max-width: 100%;
+  }
+
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+
+  .form {
+    flex-direction: column;
+  }
+
+  .form input,
+  .form select,
+  .form button {
+    width: 100%;
+  }
+
+  .transactions-section {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    font-size: 15px;
+  }
+
+  .navbar {
+    padding: 14px 16px;
+  }
+
+  .logo {
+    font-size: 1.2rem;
+  }
+
+  .nav-right {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  #logout-btn {
+    width: 100%;
+  }
+
+  .app-container {
+    padding: 16px 16px 30px;
+  }
+
+  .summary {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .card {
+    min-width: unset;
+    padding: 18px;
+  }
+
+  .card-amount {
+    font-size: 24px;
+  }
+
+  .form-section,
+  .transactions-section,
+  .chart-section {
+    padding: 18px;
+    margin: 0 0 20px;
+  }
+
+  .auth-container {
+    min-height: 100vh;
+    padding: 20px 12px;
+  }
+
+  .auth-box {
+    padding: 28px;
+    max-width: 100%;
+  }
+
+  .auth-box button {
+    width: 100%;
+  }
 }
 
